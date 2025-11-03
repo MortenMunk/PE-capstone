@@ -15,10 +15,10 @@ class Graph:
             case "mesh":
                 self._random_mesh()
             case "ring":
-                nodes = len(self.nodes)
-                for i in range(nodes):
+                n = len(self.nodes)
+                for i in range(n):
                     a = self.nodes[i]
-                    b = self.nodes[i + 1 % nodes]
+                    b = self.nodes[(i + 1) % n]
                     self._connect(a, b)
             case "star":
                 center = self.nodes[0]
@@ -29,7 +29,7 @@ class Graph:
                     for b in self.nodes[i + 1 :]:
                         self._connect(a, b)
             case _:
-                ValueError(f"Topology: {self.topology} is not valid")
+                raise ValueError(f"Topology: {self.topology} is not valid")
 
     # TODO: def _random_mesh()
 

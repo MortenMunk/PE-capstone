@@ -17,6 +17,7 @@ def main():
     args = parser.parse_args()
 
     g = Graph(num_nodes=args.nodes, topology=args.top)
+    g.assign_initial_values(20, 80)
     g.draw()
 
 

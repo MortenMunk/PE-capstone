@@ -84,3 +84,7 @@ class Graph:
             for neighbor in node.neighbors:
                 G.add_edge(node.id, neighbor.id)
         return nx.is_connected(G)
+
+    def assign_initial_values(self, low=10, high=100):
+        for node in self.nodes:
+            node.val = random.uniform(low, high)

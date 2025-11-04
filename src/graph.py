@@ -42,10 +42,23 @@ class Graph:
 
         base_prob = 1 / math.log(n + 2)
         p = min(0.8, max(0.02, base_prob))
+
         for i, a in enumerate(self.nodes):
             for b in self.nodes[i + 1 :]:
                 if random.random() < p:
                     self._connect(a, b)
+
+        if not self.is_connected():
+            G = nx.Graph()
+            for node in self.nodes:
+                for neighbor in node.neighbors:
+                    G.add_edge(node.id, neighbor.id)
+
+            components = list(nx.connected_components(G))
+            for i in range(len(components) - 1):
+                a = random.choice(list(components[i]))
+                b = random.choice(list(components[i + 1]))
+                self._connect(self.nodes[a], self.nodes[b])
 
     def _connect(self, a: Node, b: Node):
         a.neighbors.add(b)
@@ -64,3 +77,10 @@ class Graph:
             font_weight="bold",
         )
         plt.savefig("img/graph.png", bbox_inches="tight")
+
+    def is_connected(self):
+        G = nx.Graph()
+        for node in self.nodes:
+            for neighbor in node.neighbors:
+                G.add_edge(node.id, neighbor.id)
+        return nx.is_connected(G)

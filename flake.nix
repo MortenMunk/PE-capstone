@@ -21,8 +21,12 @@
           mkShell {
             buildInputs = [
               python312
+              stdenv.cc.cc.lib
               uv
+              tk
             ];
+
+            LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib/";
           };
       }
     );

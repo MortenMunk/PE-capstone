@@ -17,6 +17,7 @@ def main():
     args = parser.parse_args()
 
     g = Graph(num_nodes=args.nodes, topology=args.top)
+    g.draw()
 
 
 if __name__ == "__main__":

@@ -1,4 +1,8 @@
-from node import Node
+from src.node import Node
+import networkx as nx
+import matplotlib.pyplot as plt
+import random
+import math
 
 
 class Graph:
@@ -31,8 +35,32 @@ class Graph:
             case _:
                 raise ValueError(f"Topology: {self.topology} is not valid")
 
-    # TODO: def _random_mesh()
+    def _random_mesh(self):
+        n = len(self.nodes)
+        if n < 2:
+            return
+
+        base_prob = 1 / math.log(n + 2)
+        p = min(0.8, max(0.02, base_prob))
+        for i, a in enumerate(self.nodes):
+            for b in self.nodes[i + 1 :]:
+                if random.random() < p:
+                    self._connect(a, b)
 
     def _connect(self, a: Node, b: Node):
         a.neighbors.add(b)
         b.neighbors.add(a)
+
+    def draw(self):
+        G = nx.Graph()
+        for node in self.nodes:
+            for neighbor in node.neighbors:
+                G.add_edge(node.id, neighbor.id)
+        nx.draw(
+            G,
+            with_labels=True,
+            node_color="lightblue",
+            node_size=800,
+            font_weight="bold",
+        )
+        plt.savefig("img/graph.png", bbox_inches="tight")

@@ -70,9 +70,10 @@ class Graph:
             for neighbor in node.neighbors:
                 G.add_edge(node.id, neighbor.id)
 
-        pos = nx.spring_layout(G, seed=42)
+        pos = nx.shell_layout(G)
         labels = {
-            node.id: f"{node.initial_val:.1f} -> {node.val:.1f}" for node in self.nodes
+            node.id: f"{node.id}\n{node.initial_val:.1f} -> {node.val:.1f}"
+            for node in self.nodes
         }
 
         plt.figure(figsize=(6, 6))

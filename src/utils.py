@@ -1,5 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import random
+
+
+def set_seed(x: int = 42):
+    random.seed(x)
+    np.random.seed(x)
 
 
 def plot_convergence(title, history, true_avg, filename="img/convergence.png"):

@@ -1,13 +1,18 @@
 import argparse
-import random
 import numpy as np
+import random
+
+random.seed(42)
+np.random.seed(42)
+
 from src.consensus import async_consensus, sync_consensus
 from src.graph import Graph
 from src.secret_sharing import additive_secret_share_matrix
-from src.utils import plot_convergence
+from src.utils import plot_convergence, set_seed
 
 
 def main():
+    # set_seed(42)
     parser = argparse.ArgumentParser(description="Graph simulation")
     parser.add_argument(
         "--nodes", type=int, default=5, help="How many nodes in the graph?"
@@ -49,5 +54,4 @@ def main():
 
 
 if __name__ == "__main__":
-    random.seed(42)
     main()

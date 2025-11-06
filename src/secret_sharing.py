@@ -1,5 +1,5 @@
 import numpy as np
-from graph import Graph
+from src.graph import Graph
 
 
 def additive_secret_share_matrix(graph: Graph):
@@ -20,7 +20,8 @@ def additive_secret_share_matrix(graph: Graph):
     s = np.array([node.val for node in graph.nodes])
 
     ones = np.ones(n)
-    s_shared = s - R @ ones + R.T @ ones
+    # s' = s - R·1 + Rᵀ·1 using np.dot() for matrix multiplication
+    s_shared = s - np.dot(R, ones) + np.dot(R.T, ones)
 
     for i, node in enumerate(graph.nodes):
         node.val = s_shared[i]

@@ -13,21 +13,23 @@
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
-        pkgs = import nixpkgs {
-          inherit system;
-        };
+        pkgs = import nixpkgs {inherit system;};
       in {
-        devShells.default = with pkgs;
-          mkShell {
-            buildInputs = [
-              python312
-              stdenv.cc.cc.lib
-              uv
-              tk
-            ];
+        devShells.default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            python312
+            uv
+            zlib
+            gcc
+            stdenv.cc.cc.lib
+          ];
 
-            LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib/";
-          };
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+            pkgs.zlib
+            pkgs.stdenv.cc.cc.lib
+            pkgs.gcc.cc
+          ];
+        };
       }
     );
 }

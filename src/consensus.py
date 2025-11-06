@@ -1,28 +1,43 @@
-from graph import Graph
+from src.graph import Graph
 import random
+import numpy as np
 
 
-def sync_consensus(graph: Graph, eps=0.1, max_iters=200, tol=0.0001):
-    values = [n.val for n in graph.nodes]
-    history = [values.copy()]
+def sync_consensus(graph: Graph, eps=0.1, max_iters=1000, tol=0.0001):
+    n = len(graph.nodes)
+    W = weight_matrix(graph, eps)
+
+    x = np.array([n.val for n in graph.nodes])
+    history = [x.copy()]
 
     for _ in range(max_iters):
-        for node in graph.nodes:
-            new_values = []
-            for node in graph.nodes:
-                delta = sum(neighbor.val - node.val for neighbor in node.neighbors)
-                new_values.append(node.val + eps * delta)
+        x_next = np.dot(W, x)
+        history.append(x_next.copy())
 
-            for i, node in enumerate(graph.nodes):
-                node.val = new_values[i]
+        if np.max(np.abs(x_next - x)) < tol:
+            break
+        x = x_next
 
-            values = [n.val for n in graph.nodes]
-            history.append(values.copy())
+    for i, node in enumerate(graph.nodes):
+        node.val = x[i]
 
-            if max(values) - min(values) < tol:
-                break
+    return history
 
-        return history
+
+def weight_matrix(graph, eps=0.1):
+    n = len(graph.nodes)
+    A = np.zeros((n, n))
+    for node in graph.nodes:
+        for neighbor in node.neighbors:
+            A[node.id, neighbor.id] = 1
+
+    # Degree matrix
+    D = np.diag(np.sum(A, axis=1))
+    # Laplacian graph
+    L = D - A
+    # Static weight matrix
+    W = np.eye(n) - eps * L
+    return W
 
 
 def async_consensus(graph: Graph, max_iters=1000, tol=0.0001):

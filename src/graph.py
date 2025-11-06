@@ -69,14 +69,26 @@ class Graph:
         for node in self.nodes:
             for neighbor in node.neighbors:
                 G.add_edge(node.id, neighbor.id)
+
+        pos = nx.spring_layout(G, seed=42)
+        labels = {
+            node.id: f"{node.initial_val:.1f} -> {node.val:.1f}" for node in self.nodes
+        }
+
+        plt.figure(figsize=(6, 6))
         nx.draw(
             G,
+            pos,
             with_labels=True,
+            labels=labels,
             node_color="lightblue",
-            node_size=800,
+            node_size=1200,
             font_weight="bold",
+            font_size=10,
         )
+        plt.title(f"{self.topology} topology")
         plt.savefig("img/graph.png", bbox_inches="tight")
+        plt.close()
 
     def is_connected(self):
         G = nx.Graph()
@@ -88,3 +100,4 @@ class Graph:
     def assign_initial_values(self, low=10, high=100):
         for node in self.nodes:
             node.val = random.uniform(low, high)
+            node.initial_val = node.val

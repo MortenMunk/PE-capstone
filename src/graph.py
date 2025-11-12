@@ -78,7 +78,7 @@ class Graph:
         privacy_offset_p = final_avg_s_p - true_avg_s
 
         labels = {
-            node.id: f"{node.id}\n{node.initial_val:.1f} -> {node.val - privacy_offset_p:.1f}"
+            node.id: f"{node.id}\n{node.initial_val} -> {node.val - privacy_offset_p:.1f}"
             for node in self.nodes
         }
 
@@ -106,5 +106,5 @@ class Graph:
 
     def assign_initial_values(self, low=10, high=100):
         for node in self.nodes:
-            node.val = random.uniform(low, high)
+            node.val = random.randint(low, high)
             node.initial_val = node.val

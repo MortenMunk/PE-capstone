@@ -24,9 +24,9 @@ def plot_convergence(title, sync_errors, async_errors, filename="img/comparison.
 
 
 def avg_error(history, true_avg):
+    offset = np.mean(history[0]) - true_avg
     errors = []
     for vals in history:
-        vals = np.array(vals, dtype=float)
-        err = np.mean(np.abs(vals - true_avg))
-        errors.append(err)
+        vals = np.array(vals) - offset
+        errors.append(np.mean(np.abs(vals - true_avg)))
     return errors

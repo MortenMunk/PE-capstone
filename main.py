@@ -27,9 +27,9 @@ def main():
 
     g = Graph(num_nodes=args.nodes, topology=args.top)
     g.assign_initial_values(20, 80)
+    true_avg = np.mean([n.initial_val for n in g.nodes])
     additive_secret_share_matrix(g)
 
-    true_avg = np.mean([n.val for n in g.nodes])
     print(
         f"Graph Topology: {args.top}, Nodes: {args.nodes}, True Average: {true_avg:.4f}"
     )

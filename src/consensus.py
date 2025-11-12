@@ -11,7 +11,7 @@ def sync_consensus(graph: Graph, eps=0.1, max_iters=2000, tol=tol):
     x = np.array([n.val for n in graph.nodes])
     history = [x.copy()]
 
-    for _ in range(max_iters):
+    for k in range(max_iters):
         x_next = np.dot(W, x)
         history.append(x_next.copy())
 
@@ -28,9 +28,12 @@ def sync_consensus(graph: Graph, eps=0.1, max_iters=2000, tol=tol):
 def weight_matrix(graph, eps=0.1):
     n = len(graph.nodes)
     A = np.zeros((n, n))
-    for node in graph.nodes:
+
+    for i, node in enumerate(graph.nodes):
         for neighbor in node.neighbors:
-            A[node.id, neighbor.id] = 1
+            j = graph.nodes.index(neighbor)
+            A[i, j] = 1
+            A[j, i] = 1
 
     # Degree matrix
     D = np.diag(np.sum(A, axis=1))

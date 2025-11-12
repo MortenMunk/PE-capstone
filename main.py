@@ -8,7 +8,7 @@ np.random.seed(42)
 from src.consensus import async_consensus, sync_consensus
 from src.graph import Graph
 from src.secret_sharing import additive_secret_share_matrix
-from src.utils import plot_convergence
+from src.utils import avg_error, plot_convergence, avg_error
 
 
 def main():
@@ -29,7 +29,7 @@ def main():
     g.assign_initial_values(20, 80)
     additive_secret_share_matrix(g)
 
-    true_avg = np.mean([n.initial_val for n in g.nodes])
+    true_avg = np.mean([n.val for n in g.nodes])
     print(
         f"Graph Topology: {args.top}, Nodes: {args.nodes}, True Average: {true_avg:.4f}"
     )
@@ -55,9 +55,8 @@ def main():
 
     plot_convergence(
         "Additive secret sharing",
-        sync_history,
-        async_history,
-        true_avg,
+        avg_error(sync_history, true_avg),
+        avg_error(async_history, true_avg),
         filename=outfile,
     )
 

@@ -2,9 +2,10 @@ from src.graph import Graph
 import random
 import numpy as np
 
+tol = 0.00001
 
-def sync_consensus(graph: Graph, eps=0.1, max_iters=1000, tol=0.0001):
-    n = len(graph.nodes)
+
+def sync_consensus(graph: Graph, eps=0.1, max_iters=2000, tol=tol):
     W = weight_matrix(graph, eps)
 
     x = np.array([n.val for n in graph.nodes])
@@ -40,7 +41,7 @@ def weight_matrix(graph, eps=0.1):
     return W
 
 
-def async_consensus(graph: Graph, max_iters=1000, tol=0.0001):
+def async_consensus(graph: Graph, max_iters=1000, tol=tol):
     values = [n.val for n in graph.nodes]
     history = [values.copy()]
 

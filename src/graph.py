@@ -3,6 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import random
 import math
+import numpy as np
 
 
 class Graph:
@@ -71,8 +72,13 @@ class Graph:
                 G.add_edge(node.id, neighbor.id)
 
         pos = nx.shell_layout(G)
+
+        true_avg_s = np.mean([node.initial_val for node in self.nodes])
+        final_avg_s_p = np.mean([node.val for node in self.nodes])
+        privacy_offset_p = final_avg_s_p - true_avg_s
+
         labels = {
-            node.id: f"{node.id}\n{node.initial_val:.1f} -> {node.val:.1f}"
+            node.id: f"{node.id}\n{node.initial_val:.1f} -> {node.val - privacy_offset_p:.1f}"
             for node in self.nodes
         }
 

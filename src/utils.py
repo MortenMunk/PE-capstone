@@ -8,14 +8,31 @@ def set_seed(x: int = 42):
     np.random.seed(x)
 
 
-def plot_convergence(title, history, true_avg, filename="img/convergence.png"):
-    errors = [np.mean([(v - true_avg) ** 2 for v in vals]) for vals in history]
+def plot_convergence(
+    title, sync_history, async_history, true_avg, filename="img/comparison.png"
+):
+    sync_errors = avg_error(sync_history, true_avg)
+    async_errors = avg_error(async_history, true_avg)
 
-    plt.figure()
-    plt.plot(errors)
-    plt.yscale("log")
-    plt.xlabel("iteration")
-    plt.ylabel("MSE")
+    plt.figure(figsize=(10, 6))
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(sync_errors, label="Synchronous Consensus")
+    plt.plot(async_errors, label="Asynchronous Consensus")
+
+    # plt.yscale("log")
+    plt.xlabel("Iteration")
+    plt.ylabel("Error (MSE)")
     plt.title(str(title))
-    plt.grid(True)
+    plt.grid(True, which="both", ls="--", alpha=0.7)
+    plt.legend()
     plt.savefig(filename, bbox_inches="tight")
+    plt.close()
+
+
+def avg_error(history, true_avg):
+    errors = []
+    for vals in history:
+        err = np.mean(abs(np.array(vals) - true_avg))
+        errors.append(err)
+    return errors

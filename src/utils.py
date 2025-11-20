@@ -13,7 +13,7 @@ def plot_convergence(title, sync_errors, async_errors, filename="img/comparison.
     plt.plot(sync_errors, label="Synchronous Consensus")
     plt.plot(async_errors, label="Asynchronous Consensus")
 
-    # plt.yscale("log")
+    plt.yscale("log")
     plt.xlabel("Iteration")
     plt.ylabel("Abs error")
     plt.title(title)

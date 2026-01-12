@@ -15,7 +15,7 @@ def plot_convergence(title, sync_errors, async_errors, filename="img/comparison.
 
     plt.yscale("log")
     plt.xlabel("Iteration")
-    plt.ylabel("Abs error")
+    plt.ylabel("Error")
     plt.title(title)
     plt.grid(True, which="both", ls="--", alpha=0.7)
     plt.legend()
@@ -24,9 +24,9 @@ def plot_convergence(title, sync_errors, async_errors, filename="img/comparison.
 
 
 def avg_error(history, true_avg):
-    offset = np.mean(history[0]) - true_avg
     errors = []
     for vals in history:
-        vals = np.array(vals) - offset
-        errors.append(np.mean(np.abs(vals - true_avg)))
+        vals = np.array(vals)
+        mean_abs_error = np.mean(np.abs(vals - true_avg))
+        errors.append(mean_abs_error)
     return errors

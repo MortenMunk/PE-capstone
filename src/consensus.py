@@ -2,20 +2,20 @@ from src.graph import Graph
 import random
 import numpy as np
 
-tol = 0.01
+tol = 0.001
 
 
-def sync_consensus(graph: Graph, eps=0.1, max_iters=2000, tol=tol):
-    W = weight_matrix(graph, eps)
+def sync_consensus(graph: Graph, max_iters=2000, tol=tol):
+    W = weight_matrix(graph)
 
     x = np.array([n.val for n in graph.nodes])
     history = [x.copy()]
 
-    for k in range(max_iters):
+    for _ in range(max_iters):
         x_next = np.dot(W, x)
         history.append(x_next.copy())
 
-        if np.max(np.abs(x_next - x)) < tol:
+        if has_converged(x_next, tol):
             break
         x = x_next
 
@@ -25,22 +25,18 @@ def sync_consensus(graph: Graph, eps=0.1, max_iters=2000, tol=tol):
     return history
 
 
-def weight_matrix(graph, eps=0.1):
+def weight_matrix(graph):
     n = len(graph.nodes)
-    A = np.zeros((n, n))
+    max_degree = max(len(node.neighbors) for node in graph.nodes)
+    alpha = 1.0 / (max_degree + 1)
 
-    for i, node in enumerate(graph.nodes):
+    W = np.zeros((n, n))
+    for node in graph.nodes:
+        i = node.id
+        degree = len(node.neighbors)
+        W[i, i] = 1.0 - (degree * alpha)
         for neighbor in node.neighbors:
-            j = graph.nodes.index(neighbor)
-            A[i, j] = 1
-            A[j, i] = 1
-
-    # Degree matrix
-    D = np.diag(np.sum(A, axis=1))
-    # Laplacian graph
-    L = D - A
-    # Static weight matrix
-    W = np.eye(n) - eps * L
+            W[i, neighbor.id] = alpha
     return W
 
 
@@ -58,7 +54,11 @@ def async_consensus(graph: Graph, max_iters=20000, tol=tol):
         values = [n.val for n in graph.nodes]
         history.append(values.copy())
 
-        if max(values) - min(values) < tol:
+        if has_converged(values, tol):
             break
 
     return history
+
+
+def has_converged(values, tol):
+    return (np.max(values) - np.min(values)) < tol

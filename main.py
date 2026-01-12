@@ -7,6 +7,7 @@ np.random.seed(42)
 
 from src.consensus import async_consensus, sync_consensus
 from src.graph import Graph
+from src.privacy import apply_differential_privacy
 from src.secret_sharing import additive_secret_share_matrix
 from src.utils import avg_error, plot_convergence, avg_error
 
@@ -23,13 +24,17 @@ def main():
         help="Which topology?",
         choices=["star", "mesh", "ring", "full"],
     )
+    parser.add_argument("--mode", type=str, default="secret", choices=["secret", "dp"])
     args = parser.parse_args()
 
     g = Graph(num_nodes=args.nodes, topology=args.top)
     g.assign_initial_values(20, 80)
     true_avg = np.mean([n.initial_val for n in g.nodes])
-    additive_secret_share_matrix(g)
 
+    if args.mode == "secret":
+        additive_secret_share_matrix(g)
+    else:
+        apply_differential_privacy(g, epsilon=1.0)
     print(
         f"Graph Topology: {args.top}, Nodes: {args.nodes}, True Average: {true_avg:.4f}"
     )

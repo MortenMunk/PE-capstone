@@ -2,7 +2,7 @@ from src.graph import Graph
 import random
 import numpy as np
 
-tol = 0.001
+tol = 0.00001
 
 
 def sync_consensus(graph: Graph, max_iters=2000, tol=tol):

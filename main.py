@@ -9,7 +9,7 @@ from src.consensus import async_consensus, sync_consensus
 from src.graph import Graph
 from src.privacy import apply_differential_privacy
 from src.secret_sharing import additive_secret_share_matrix
-from src.utils import avg_error, plot_convergence, avg_error
+from src.utils import avg_error, plot_dp_comparison, plot_convergence, avg_error
 
 
 def main():
@@ -33,37 +33,55 @@ def main():
 
     if args.mode == "secret":
         additive_secret_share_matrix(g)
+        shared_vals = np.array([n.val for n in g.nodes])
+
+        print("Running Secret Sharing (Sync)...")
+        sync_history = sync_consensus(g)
+
+        for i, node in enumerate(g.nodes):
+            node.val = shared_vals[i]
+        async_history = async_consensus(g)
+
+        plot_convergence(
+            "Additive secret sharing",
+            avg_error(sync_history, true_avg),
+            avg_error(async_history, true_avg),
+            filename="img/comparison.png",
+        )
     else:
-        apply_differential_privacy(g, epsilon=1.0)
-    print(
-        f"Graph Topology: {args.top}, Nodes: {args.nodes}, True Average: {true_avg:.4f}"
-    )
+        # --- DP MODE: ASS vs Multiple DP Distributions ---
+        # 1. Baseline: Additive Secret Sharing
+        for node in g.nodes:
+            node.val = node.initial_val  # Reset
+        additive_secret_share_matrix(g)
+        ass_history = sync_consensus(g)
 
-    # save history of initial vals
-    initial_shared_vals = np.array([n.val for n in g.nodes])
+        # 2. DP: Laplace
+        for node in g.nodes:
+            node.val = node.initial_val  # Reset
+        apply_differential_privacy(g, epsilon=1.0, distribution="laplace")
+        laplace_history = sync_consensus(g)
 
-    # synchronous
-    print("Running synchornous...")
-    for i, node in enumerate(g.nodes):
-        # reset nodes to s_i^r
-        node.val = initial_shared_vals[i]
-    sync_history = sync_consensus(g)
+        # 3. DP: Gaussian
+        for node in g.nodes:
+            node.val = node.initial_val  # Reset
+        apply_differential_privacy(g, epsilon=1.0, distribution="gaussian")
+        gaussian_history = sync_consensus(g)
 
-    # asynchronous
-    print("Running asynchronous...")
-    for i, node in enumerate(g.nodes):
-        # reset nodes to s_i^r
-        node.val = initial_shared_vals[i]
-    async_history = async_consensus(g)
-
-    outfile = "img/comparison.png"
-
-    plot_convergence(
-        "Additive secret sharing",
-        avg_error(sync_history, true_avg),
-        avg_error(async_history, true_avg),
-        filename=outfile,
-    )
+        # 4. DP: Uniform
+        for node in g.nodes:
+            node.val = node.initial_val
+        apply_differential_privacy(g, epsilon=1.0, distribution="uniform")
+        uniform_history = sync_consensus(g)
+        print("Plotting comparison with separate Laplace and Gaussian lines...")
+        plot_dp_comparison(
+            "ASS vs Laplace vs Gaussian DP",
+            avg_error(ass_history, true_avg),
+            avg_error(laplace_history, true_avg),
+            avg_error(gaussian_history, true_avg),
+            avg_error(uniform_history, true_avg),
+            filename="img/dp_detailed_comparison.png",
+        )
 
     g.draw()
 

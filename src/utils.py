@@ -42,7 +42,7 @@ def plot_convergence(title, line1_errors, line2_errors, filename="img/comparison
     plt.xlabel("Iteration")
     plt.ylabel("Max error (log)")
     plt.title(title)
-    plt.grid(True, which="both", ls="--", alpha=0.7)
+    # plt.grid(True, which="both", ls="--", alpha=0.7)
     plt.legend()
     plt.savefig(filename, bbox_inches="tight")
     plt.close()

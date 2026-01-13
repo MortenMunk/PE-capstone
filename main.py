@@ -40,6 +40,8 @@ def main():
 
         for i, node in enumerate(g.nodes):
             node.val = shared_vals[i]
+
+        print("Running Secret Sharing (Async)...")
         async_history = async_consensus(g)
 
         plot_convergence(
@@ -73,9 +75,9 @@ def main():
             node.val = node.initial_val
         apply_differential_privacy(g, epsilon=1.0, distribution="uniform")
         uniform_history = sync_consensus(g)
-        print("Plotting comparison with separate Laplace and Gaussian lines...")
+        print("Plotting comparison with Laplace, Uniform and Gaussian lines...")
         plot_dp_comparison(
-            "ASS vs Laplace vs Gaussian DP",
+            "Additive vs Laplace vs Gaussian vs Uniform",
             avg_error(ass_history, true_avg),
             avg_error(laplace_history, true_avg),
             avg_error(gaussian_history, true_avg),

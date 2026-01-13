@@ -9,7 +9,7 @@ def apply_differential_privacy(graph, epsilon=1.0, distribution="laplace"):
             noise = np.random.laplace(0, sensitivity / epsilon)
         elif distribution == "gaussian":
             noise = np.random.normal(0, sensitivity / epsilon)
-        elif distribution == "uniform":  # Added for Bonus 2
+        elif distribution == "uniform":
             noise = np.random.uniform(-(sensitivity / epsilon), (sensitivity / epsilon))
         else:
             noise = 0
